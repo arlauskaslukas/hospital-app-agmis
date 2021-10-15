@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/api/drugs', [\App\Http\Controllers\DrugController::class, 'index']);
+Route::post('/api/drugs', [\App\Http\Controllers\DrugController::class, 'store']);
+Route::get('/api/drugs/{id}',[\App\Http\Controllers\DrugController::class,'show']);
