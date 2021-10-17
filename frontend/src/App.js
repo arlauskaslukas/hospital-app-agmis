@@ -22,6 +22,12 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { CreateDrugPage } from './pages/CreateDrugPage';
+import ShowDrug from './pages/ShowDrug';
+import SVGbackground from './assets/polygon-scatter-haikei.svg';
+import { PatientList } from './pages/PatientList';
+import { ShowPatient } from './pages/ShowPatient';
+import { CreateNewPatient } from './pages/CreateNewPatient';
+
 
 const drawerWidth = 240;
 
@@ -82,7 +88,7 @@ function App() {
   return (
     <>
 
-    <div className="App">
+    <div className="App" style={{backgroundColor:`rgba(0,0,0,0.1)`, height:'100vh', overflowY:'auto'}}>
       <Box sx={{display:'flex'}}>
       <CssBaseline />
         <AppBar position="fixed" open={open}>
@@ -146,7 +152,11 @@ function App() {
           <DrawerHeader/>
           <BrowserRouter>
               <Route exact path="/drugs"><DrugsPage/></Route>
+              <Route exact path="/drug/:id"><ShowDrug/></Route>
               <Route exact path="/drugs/create"><CreateDrugPage/></Route>
+              <Route exact path="/patients"><PatientList/></Route>
+              <Route exact path="/patients/create"><CreateNewPatient/></Route>
+              <Route exact path="/patient/:id"><ShowPatient/></Route>
           </BrowserRouter>
         </Main>
     </Box>

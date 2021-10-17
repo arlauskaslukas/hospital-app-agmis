@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hospital;
+use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -14,7 +15,7 @@ class PatientController extends Controller
      */
     public function index()
     {
-        $returnable = Hospital::all();
+        $returnable = Patient::all();
         return response($returnable, 200);
     }
 
@@ -36,10 +37,10 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-        $Hospital = new Hospital($request->all());
-        if($Hospital->save())
+        $Patient = new Patient($request->all());
+        if($Patient->save())
         {
-            return response($Hospital,201);
+            return response($Patient,201);
         }
         return response('',409);
     }
@@ -52,12 +53,33 @@ class PatientController extends Controller
      */
     public function show($id)
     {
-        $Hospital = Hospital::find($id);
-        if($Hospital==null)
+        $Patient = Patient::find($id);
+        if($Patient==null)
         {
             return response('',404);
         }
-        return response($Hospital, 200);
+        return response($Patient, 200);
+    }
+
+    public function patient_data($id) {
+        $Patient = Patient::find($id);
+        if($Patient==null)
+        {
+            return response('',404);
+        }
+        $appointments = $Patient->appointments()->get();
+        $Patient["appointments"] = $appointments;
+        $prescriptions = $Patient->prescriptions()->get();
+        foreach($prescriptions as $prescription) {
+            $drug = $prescription->drug()->get();
+            $doctor = $prescription->doctor()->get()[0];
+            $personal_data = $doctor->user()->get()[0];
+            $doctor['personal_data'] = $personal_data;
+            $prescription['drug'] = $drug;
+            $prescription['doctor'] = $doctor;
+        }
+        $Patient['prescriptions'] = $prescriptions;
+        return response($Patient, 200);
     }
 
     /**
@@ -80,11 +102,11 @@ class PatientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $Hospital = Hospital::find($id);
-        if($Hospital==null) {
+        $Patient = Patient::find($id);
+        if($Patient==null) {
             return response('', 404);
         }
-        $Hospital->update($request->all());
+        $Patient->update($request->all());
         return response('', 200);
     }
 
@@ -96,11 +118,11 @@ class PatientController extends Controller
      */
     public function destroy($id)
     {
-        $Hospital = Hospital::find($id);
-        if($Hospital==null) {
+        $Patient = Patient::find($id);
+        if($Patient==null) {
             return response('', 404);
         }
-        $Hospital->delete();
+        $Patient->delete();
         return response('', 200);
     }
 }

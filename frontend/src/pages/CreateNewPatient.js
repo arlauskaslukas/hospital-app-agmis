@@ -12,12 +12,11 @@ const useStyles = makeStyles((theme)=>({
     }
 }));
 
-export const CreateDrugPage = () => {
+export const CreateNewPatient = () => {
     const styles = useStyles();
-    const [Name, setName] = useState("");
-    const [ActiveIngredient, setActiveIngredient] = useState("");
-    const [Strength, setStrength] = useState(0);
-    const [SideEffects, setSideEffects] = useState("");
+    const [FullName, setFullName] = useState("");
+    const [Age, setAge] = useState("");
+    const [Email, setEmail] = useState("");
     const [Contraindications, setContraindications] = useState("");
     const [nonValid, setnonValid] = useState([]);
     const [Success, setSuccess] = useState(false);
@@ -29,49 +28,42 @@ export const CreateDrugPage = () => {
             //logic for axios
             let res = await SendToDB();
             setSuccess(true);
+            console.log(res.data);
         }
+
 
     }
     const SendToDB = async()=>{
-        axios.post("http://127.0.0.1:8000/api/drugs", {
-            name:Name,
-            active_ingredient: ActiveIngredient,
-            strength: Strength,
-            side_effects: SideEffects,
-            contraindications: Contraindications
+        console.log({FullName, Age, Email, Contraindications});
+        axios.post("http://127.0.0.1:8000/api/patients", {
+            full_name: FullName,
+            age: Age,
+            email: Email,
+            possible_contraindications: Contraindications
         });
-    }  
-    const Validation = ()=>{
+    };
+    const Validation = ()=> {
         let isDataValid = true;
+        let num_regex = new RegExp("[1-9][0-9]*");
+        let email_regex = new RegExp("\\w+@\\w+\\.[a-z]+");
         setnonValid([]);
-        if(!_.isString(Name) || _.isEqual(Name, ""))
+        if(!_.isString(FullName) || _.isEqual(FullName, ""))
         {
             isDataValid=false;
-            setnonValid(oldVals => [...oldVals, "Drug name is either empty or non-string."]);
+            setnonValid(oldVals => [...oldVals, "Patient name is either empty or non-string."]);
         }
-        if(!_.isString(ActiveIngredient) || _.isEqual(ActiveIngredient, ""))
+        if(!_.isString(Email) || !email_regex.test(Email))
         {
             isDataValid=false;
-            setnonValid(oldVals => [...oldVals, "Drug Active Ingredient is either empty or non-string."]);
+            setnonValid(oldVals => [...oldVals, "Email is either empty or doesn't match the guidelines: example@example.com"]);
         }
-        if(!_.isNumber(Strength))
+        if(!num_regex.test(Age))
         {
             isDataValid=false;
-            setnonValid(oldVals => [...oldVals, "Drug Strength must be a number."]);
-        }
-        if(!_.isString(SideEffects) || _.isEqual(SideEffects, "") || (SideEffects.length===1 && !_.isEqual(SideEffects, "-")))
-        {
-            isDataValid=false;
-            setnonValid(oldVals => [...oldVals, "Side Effects are being filled with no info. Please use \"-\" symbol."]);
-        }
-        if(!_.isString(Contraindications) || _.isEqual(Contraindications, "") || (Contraindications.length===1 && !_.isEqual(Contraindications, "-")))
-        {
-            isDataValid=false;
-            setnonValid(oldVals => [...oldVals, "Contraindications are being filled with no info. Please use \"-\" symbol."]);
+            setnonValid(oldVals => [...oldVals, "Age is either not filled or is not following guidelines"]);
         }
         return isDataValid;
     }
-
     return (
         <Container>
             <div>
@@ -97,36 +89,36 @@ export const CreateDrugPage = () => {
                 Your input data has been successfully uploaded to database.
                 </Alert>:<></>}
                 <Grid container component={Paper} paddingBottom={"20px"} paddingRight={"20px"} marginTop={"20px"} spacing={2}>
-                    <Grid className={styles.gridItems} item xs={12} md={3}>
+                    <Grid className={styles.gridItems} item xs={12} md={5}>
                         <TextField 
                         fullWidth 
                         variant={"outlined"} 
                         required 
-                        label="Drug name"
-                        value={Name}
-                        onChange={(event)=>setName(event.target.value)}/>
+                        label="Full name"
+                        value={FullName}
+                        onChange={(event)=>setFullName(event.target.value)}/>
                     </Grid>
-                    <Grid className={styles.gridItems} item xs={12} md={6}>
+                    <Grid className={styles.gridItems} item xs={12} md={5}>
                     <TextField 
                         fullWidth 
                         variant={"outlined"} 
                         required 
-                        label="Drug Active Ingredient"
-                        value={ActiveIngredient}
-                        onChange={(event)=>setActiveIngredient(event.target.value)}/>
+                        label="Patient Email"
+                        value={Email}
+                        onChange={(event)=>setEmail(event.target.value)}/>
                     </Grid>
-                    <Grid className={styles.gridItems} item xs={12} md={3}>
+                    <Grid className={styles.gridItems} item xs={12} md={2}>
                     <TextField 
                         fullWidth 
                         variant={"outlined"} 
                         required 
-                        label="Drug Strength"
-                        value={Strength}
-                        onChange={(event)=>setStrength(event.target.value)}/>
+                        label="Patient age"
+                        value={Age}
+                        onChange={(event)=>setAge(event.target.value)}/>
                     </Grid>
                     <Grid className={styles.gridItems} item xs={12}>
                         <Typography variant="body1">
-                            For the following fields fill everything that applies. If nothing applies for one or both fields, DO NOT leave them empty. Type in "-" sign.
+                            For the possible contraindications fill everything that applies: chronic diseases, current conditions, prescribed or over-the-counter medications usage, etc.
                         </Typography>
                     </Grid>
                     <Grid className={styles.gridItems} item xs={12}>
@@ -135,28 +127,16 @@ export const CreateDrugPage = () => {
                         rows={4}
                         fullWidth 
                         variant={"outlined"} 
-                        required 
-                        label="Drug Side Effects"
-                        value={SideEffects}
-                        onChange={(event)=>setSideEffects(event.target.value)}/>
-                    </Grid>
-                    <Grid className={styles.gridItems} item xs={12}>
-                    <TextField 
-                        multiline
-                        rows={4}
-                        fullWidth 
-                        variant={"outlined"} 
-                        required 
-                        label="Drug Contraindications"
+                        label="Possible Contraindications or Current Conditions"
                         value={Contraindications}
                         onChange={(event)=>setContraindications(event.target.value)}/>
                     </Grid>
                 </Grid>
                 <Divider/>
                 <div style={{display:'flex', justifyContent:'flex-end', marginTop:'20px'}}>
-                    <Button variant="contained" onClick={handleButtonClick}> Save Drug Data</Button>
+                    <Button variant="contained" onClick={handleButtonClick}> Save Patient Data</Button>
                 </div>
             </div>
         </Container>
-    )
+    );
 }
