@@ -61,6 +61,26 @@ class AppointmentController extends Controller
         return response($appointment, 200);
     }
 
+    public function appointment_data($id)
+    {
+        $appointment = Appointment::find($id);
+        if($appointment==null)
+        {
+            return response('', 404);
+        }
+        $doctor = $appointment->doctor()->get()[0];
+        $doc_user_data = $doctor->user()->get()[0];
+        $doctor['user_data'] = $doc_user_data;
+        $receptionist = $appointment->receptionist()->get()[0];
+        $rec_user_data = $receptionist->user()->get()[0];
+        $receptionist['user_data'] = $rec_user_data;
+        $patient = $appointment->patient()->get()[0];
+        $appointment['doctor'] = $doctor;
+        $appointment['receptionist'] = $receptionist;
+        $appointment['patient'] = $patient;
+        return response($appointment, 200);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

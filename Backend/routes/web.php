@@ -24,3 +24,6 @@ Route::get('/api/patients', [\App\Http\Controllers\PatientController::class, 'in
 Route::get('/api/patients/{id}', [\App\Http\Controllers\PatientController::class, 'patient_data']);
 Route::post('/api/patients', [\App\Http\Controllers\PatientController::class, 'store']);
 Route::put('/api/patients', [\App\Http\Controllers\PatientController::class, 'update']);
+
+Route::get('/api/appointments', [\App\Http\Controllers\AppointmentController::class, 'index']);
+Route::get('/api/appointments/{id}', [\App\Http\Controllers\AppointmentController::class, 'appointment_data']);

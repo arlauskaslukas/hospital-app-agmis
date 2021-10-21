@@ -68,6 +68,7 @@ class PatientController extends Controller
             return response('',404);
         }
         $appointments = $Patient->appointments()->get();
+        
         $Patient["appointments"] = $appointments;
         $prescriptions = $Patient->prescriptions()->get();
         foreach($prescriptions as $prescription) {
