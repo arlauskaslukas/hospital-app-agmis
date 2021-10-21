@@ -60,6 +60,18 @@ class DoctorController extends Controller
         return response($Doctor, 200);
     }
 
+    public function showHospitalDoctors($id)
+    {
+        $doctors = Doctor::where("hospital_id", $id)->get();
+        if(count($doctors) == 0) return response('',404);
+        foreach ($doctors as $doctor)
+        {
+            $doc_user_data = $doctor->user()->get()[0];
+            $doctor['user_data'] = $doc_user_data;
+        }
+        return response($doctors, 200);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

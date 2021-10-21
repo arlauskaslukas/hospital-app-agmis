@@ -27,3 +27,5 @@ Route::put('/api/patients', [\App\Http\Controllers\PatientController::class, 'up
 
 Route::get('/api/appointments', [\App\Http\Controllers\AppointmentController::class, 'index']);
 Route::get('/api/appointments/{id}', [\App\Http\Controllers\AppointmentController::class, 'appointment_data']);
+
+Route::get('/api/hospitals/{id}/doctors', [\App\Http\Controllers\DoctorController::class,'showHospitalDoctors']);
