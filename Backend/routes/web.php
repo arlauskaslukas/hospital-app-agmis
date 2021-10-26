@@ -16,16 +16,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/api/drugs', [\App\Http\Controllers\DrugController::class, 'index']);
-Route::post('/api/drugs', [\App\Http\Controllers\DrugController::class, 'store']);
-Route::get('/api/drugs/{id}',[\App\Http\Controllers\DrugController::class,'show']);
-
-Route::get('/api/patients', [\App\Http\Controllers\PatientController::class, 'index']);
-Route::get('/api/patients/{id}', [\App\Http\Controllers\PatientController::class, 'patient_data']);
-Route::post('/api/patients', [\App\Http\Controllers\PatientController::class, 'store']);
-Route::put('/api/patients', [\App\Http\Controllers\PatientController::class, 'update']);
-
-Route::get('/api/appointments', [\App\Http\Controllers\AppointmentController::class, 'index']);
-Route::get('/api/appointments/{id}', [\App\Http\Controllers\AppointmentController::class, 'appointment_data']);
-
-Route::get('/api/hospitals/{id}/doctors', [\App\Http\Controllers\DoctorController::class,'showHospitalDoctors']);

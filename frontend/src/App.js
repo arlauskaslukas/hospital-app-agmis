@@ -27,6 +27,8 @@ import SVGbackground from './assets/polygon-scatter-haikei.svg';
 import { PatientList } from './pages/PatientList';
 import { ShowPatient } from './pages/ShowPatient';
 import { CreateNewPatient } from './pages/CreateNewPatient';
+import { ReceptionistAppointmentView } from './pages/ReceptionistAppointmentView';
+import { Register } from './pages/Register';
 
 
 const drawerWidth = 240;
@@ -157,6 +159,8 @@ function App() {
               <Route exact path="/patients"><PatientList/></Route>
               <Route exact path="/patients/create"><CreateNewPatient/></Route>
               <Route exact path="/patient/:id"><ShowPatient/></Route>
+              <Route exact path="/appointments/"> <ReceptionistAppointmentView/> </Route>
+              <Route exact path="/register"><Register/></Route>
           </BrowserRouter>
         </Main>
     </Box>

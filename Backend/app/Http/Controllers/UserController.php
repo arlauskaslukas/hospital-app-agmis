@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
+use App\Models\Receptionist;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -16,6 +20,46 @@ class UserController extends Controller
     {
         $returnable = User::all();
         return response($returnable, 200);
+    }
+
+    public function register(Request $request)
+    {
+        $fields = $request->validate([
+            'name' => 'required|string',
+            'email' =>  'required|string|unique:users,email',
+            'password' => 'required|string',
+            'profession' => 'required|string',
+            'hospital_id' => 'required',
+            'specialty' => 'string'
+        ]);
+        $user = User::create([
+            'name' => $fields['name'],
+            'email' => $fields['email'],
+            'password' => bcrypt($fields['password'])
+        ]);
+
+        $token = $user->createToken('AgmisHospital')->plainTextToken;
+
+        if($fields['profession'] == "Doctor")
+        {
+            $doctor = Doctor::create([
+                'specialty'=>$fields['specialty'],
+                'hospital_id'=>$fields['hospital_id'],
+                'user_id'=>$user['id']
+            ]);
+            $user['profession_data'] = $doctor;
+        }
+        elseif($fields['profession']=="Receptionist") {
+            $receptionist = Receptionist::create([
+                'hospital_id'=>$fields['hospital_id'],
+                'user_id'=>$user['id']
+            ]);
+            $user['profession_data'] = $receptionist;
+        }
+
+        $cookie = cookie('JWTtoken', $token, 60*24);
+
+        return response($user, 201)->withCookie($cookie);
     }
 
     /**

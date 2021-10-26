@@ -86,10 +86,10 @@ export const PatientList = () => {
           <FormControl style={{ width: "7vw", marginTop: "20px" }}>
             <InputLabel id="patientsentries">Entries in page</InputLabel>
             <Select
-              labelId="patiententries"
+              labelId="patientsentries"
               id="patiententries-select"
               value={entriesInPage}
-              label="Entries in one page"
+              label="Entries in page"
               onChange={handleElementQtyChange}
             >
               <MenuItem value={5}>5</MenuItem>
