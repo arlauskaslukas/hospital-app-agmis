@@ -15,6 +15,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Error } from "../components/Error";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Cookies from "universal-cookie";
 
 const useStyles = makeStyles((theme) => ({
   formField: {
@@ -32,6 +33,7 @@ export const Register = () => {
   const [Specialty, setSpecialty] = useState("");
   const [Hospital, setHospital] = useState(0);
   const [Errors, setErrors] = useState([]);
+  const cookies = new Cookies();
   const RetrieveHospitals = async () => {
     const results = await axios.get("http://127.0.0.1:8000/api/hospitals");
     setHospitalsFromDB(results.data);
@@ -39,9 +41,19 @@ export const Register = () => {
   useEffect(() => RetrieveHospitals(), []);
   const styles = useStyles();
 
-  const HandleRegistration = () => {
+  const HandleRegistration = async () => {
     if (ValidateForm()) {
       //logic for registering.
+      const results = await axios.post("http://127.0.0.1:8000/api/register", {
+        name: name,
+        email: email,
+        password: password,
+        profession: profession,
+        hospital_id: Hospital,
+        specialty: Specialty,
+      });
+      console.log(results);
+      cookies.set("Authorization", results.data.token);
     }
   };
 

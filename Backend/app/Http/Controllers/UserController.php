@@ -22,6 +22,31 @@ class UserController extends Controller
         return response($returnable, 200);
     }
 
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'email' =>  'required|string',
+            'password' => 'required|string',
+        ]);
+        $user = User::where('email', $fields['email'])->first();
+
+        if(!$user || !Hash::check($fields['password'], $user->password))
+        {
+        
+            return response([
+                'message' => "Invalid credentials"
+            ], 401);
+        }
+
+        $token = $user->createToken('AgmisHospital')->plainTextToken;
+
+        $cookie = cookie('JWTtoken', $token, 60*24);
+
+        $user['token'] = $token;
+
+        return response($user, 200)->withCookie($cookie);
+    }
+
     public function register(Request $request)
     {
         $fields = $request->validate([
@@ -58,6 +83,8 @@ class UserController extends Controller
         }
 
         $cookie = cookie('JWTtoken', $token, 60*24);
+
+        $user['token'] = $token;
 
         return response($user, 201)->withCookie($cookie);
     }

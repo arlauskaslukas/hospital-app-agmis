@@ -33,3 +33,4 @@ Route::get('/hospitals/{id}/doctors', [\App\Http\Controllers\DoctorController::c
 Route::get('/hospitals', [\App\Http\Controllers\HospitalController::class, 'index']);
 
 Route::post('/register',[\App\Http\Controllers\UserController::class, 'register']);
+Route::post('/login',[\App\Http\Controllers\UserController::class, 'login']);
