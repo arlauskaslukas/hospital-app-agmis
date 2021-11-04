@@ -17,6 +17,7 @@ import { Error } from "../components/Error";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Cookies from "universal-cookie";
 import { Alert, AlertTitle } from "@mui/material";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   formField: {
@@ -30,9 +31,27 @@ export const Login = () => {
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const cookies = new Cookies();
+  let history = useHistory();
 
   const HandleLogin = async () => {
     if (ValidateForm()) {
+      axios
+        .post("http://127.0.0.1:8000/api/login", {
+          email: Email,
+          password: Password,
+        })
+        .then((results) => {
+          console.log(results);
+          cookies.set("Authorization", results.data.token);
+          history.push("/");
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status === 401) {
+            setErrors((oldvals) => [...oldvals, "Invalid credentials"]);
+            return;
+          }
+        });
     }
   };
   const ValidateForm = () => {

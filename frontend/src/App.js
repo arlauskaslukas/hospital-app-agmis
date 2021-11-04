@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { DrugsPage } from "./pages/DrugsPage";
 import { styled, useTheme } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { Box } from "@mui/system";
+import { Box, width } from "@mui/system";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import List from "@mui/material/List";
@@ -30,6 +30,9 @@ import { CreateNewPatient } from "./pages/CreateNewPatient";
 import { ReceptionistAppointmentView } from "./pages/ReceptionistAppointmentView";
 import { Register } from "./pages/Register";
 import { Login } from "./pages/Login";
+import { Button } from "@mui/material";
+import Cookies from "universal-cookie";
+import { Homepage } from "./pages/Homepage";
 
 const drawerWidth = 240;
 
@@ -79,13 +82,25 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 function App() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-
+  const [LoginStatus, setLoginStatus] = useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  let cookies = new Cookies();
+  useEffect(() => {
+    if (cookies.get("Authorization") === undefined) {
+      setLoginStatus(false);
+    } else {
+      setLoginStatus(true);
+    }
+  }, []);
+  const logout = () => {
+    cookies.remove("Authorization");
+    setLoginStatus(false);
   };
   return (
     <>
@@ -100,19 +115,49 @@ function App() {
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
           <AppBar position="fixed" open={open}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                sx={{ mr: 2, ...(open && { display: "none" }) }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap component="div">
-                Hospital app
-              </Typography>
+            <Toolbar
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  edge="start"
+                  sx={{ mr: 2, ...(open && { display: "none" }) }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap component="div">
+                  Hospital app
+                </Typography>
+              </div>
+              <div>
+                {LoginStatus == true ? (
+                  <Button
+                    onClick={() => logout()}
+                    color="secondary"
+                    variant="contained"
+                  >
+                    Logout
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      href="/register"
+                      color="secondary"
+                      variant="contained"
+                      style={{ marginRight: "20px" }}
+                    >
+                      Register
+                    </Button>
+                    <Button href="/login" color="secondary" variant="contained">
+                      {" "}
+                      Login
+                    </Button>
+                  </>
+                )}
+              </div>
             </Toolbar>
           </AppBar>
           <Drawer
@@ -165,6 +210,9 @@ function App() {
           <Main open={open}>
             <DrawerHeader />
             <BrowserRouter>
+              <Route exact path="/">
+                <Homepage LoginStatus={LoginStatus} />
+              </Route>
               <Route exact path="/drugs">
                 <DrugsPage />
               </Route>
